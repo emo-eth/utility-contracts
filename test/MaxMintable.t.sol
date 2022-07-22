@@ -3,7 +3,7 @@ pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
 import {MaxMintable} from "utility-contracts/MaxMintable.sol";
-import {ERC721A} from "ERC721A/ERC721A.sol";
+import {ERC721A} from "./ERC721A.sol";
 
 contract MaxMintableImpl is MaxMintable, ERC721A {
     constructor(uint256 _maxMintable) ERC721A("test", "test") MaxMintable(_maxMintable) {}

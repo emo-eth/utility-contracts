@@ -4,7 +4,7 @@ pragma solidity >=0.8.4;
 import {Test} from "forge-std/Test.sol";
 import {CommissionWithdrawable} from "utility-contracts/withdrawable/CommissionWithdrawable.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
-import {IERC20} from "openzeppelin-contracts/interfaces/IERC20.sol";
+import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 contract CommissionWithdrawableImpl is CommissionWithdrawable {
     constructor(address _payout, uint256 _bps) CommissionWithdrawable(_payout, _bps) {}
@@ -81,6 +81,7 @@ contract CommissionWithdrawableTest is Test {
     }
 
     function testWithdraw_noRestrictions(address _user) public {
+        vm.assume(_user.code.length == 0);
         payable(address(withdraw)).transfer(1 ether);
         vm.prank(_user);
         withdraw.withdraw();

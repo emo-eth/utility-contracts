@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-// import {IOwnable} from "./thirdweb/IOwnable.sol";
-import {Ownable} from "openzeppelin-contracts/access/Ownable.sol";
+import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {ERC721A} from "ERC721A/ERC721A.sol";
 
 abstract contract BatchReveal is ERC721A, Ownable {
