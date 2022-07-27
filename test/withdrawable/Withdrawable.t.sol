@@ -4,6 +4,7 @@ pragma solidity >=0.8.4;
 import {Test} from "forge-std/Test.sol";
 
 import {Withdrawable} from "utility-contracts/withdrawable/Withdrawable.sol";
+import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ERC721} from "solmate/tokens/ERC721.sol";
 import {ERC1155} from "solmate/tokens/ERC1155.sol";
@@ -73,26 +74,29 @@ contract WithdrawableTest is Test {
     function testWithdraw_onlyOwner(address _user) public {
         vm.assume(_user != withdraw.owner());
         vm.startPrank(_user);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
         withdraw.withdraw();
     }
 
     function testOnlyOwnerCanWithdrawERC20() public {
         withdraw.transferOwnership(address(1));
+        vm.prank(address(1));
+        withdraw.acceptOwnership();
 
         uint256 amount = 50 * 10**18;
         erc20.mint(amount);
         erc20.transfer(address(withdraw), amount);
-        vm.expectRevert("Ownable: caller is not the owner");
-
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
         withdraw.withdrawERC20(address(erc20));
     }
 
     function testOnlyOwnerCanWithdrawERC721() public {
         withdraw.transferOwnership(address(1));
+        vm.prank(address(1));
+        withdraw.acceptOwnership();
 
         erc721.transferFrom(address(this), address(withdraw), 0);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
         withdraw.withdrawERC721(address(erc721), 0);
     }
 

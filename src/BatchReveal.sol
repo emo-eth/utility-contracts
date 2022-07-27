@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {TwoStepOwnable} from "./TwoStepOwnable.sol";
 import {ERC721A} from "ERC721A/ERC721A.sol";
 
-abstract contract BatchReveal is ERC721A, Ownable {
+abstract contract BatchReveal is ERC721A, TwoStepOwnable {
     bytes32 public immutable provenanceHash;
     /// @dev URI used for pre-reveals and fully-revealed mints
     string public defaultURI;
@@ -60,7 +60,13 @@ abstract contract BatchReveal is ERC721A, Ownable {
         return defaultURI;
     }
 
-    function tokenURI(uint256 _tokenId) public view virtual override returns (string memory) {
+    function tokenURI(uint256 _tokenId)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         // if not fully revealed, grab URI of first Reveal that covers token ID
         if (!fullyRevealed) {
             uint256 length = reveals.length;

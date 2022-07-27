@@ -3,12 +3,20 @@ pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
 import {MaxMintable} from "utility-contracts/MaxMintable.sol";
+import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+
 import {ERC721A} from "./ERC721A.sol";
 
 contract MaxMintableImpl is MaxMintable, ERC721A {
-    constructor(uint256 _maxMintable) ERC721A("test", "test") MaxMintable(_maxMintable) {}
+    constructor(uint256 _maxMintable)
+        ERC721A("test", "test")
+        MaxMintable(_maxMintable)
+    {}
 
-    function checkAndIncrement(uint256 quantity) public checkMaxMintedForWallet(quantity) {
+    function checkAndIncrement(uint256 quantity)
+        public
+        checkMaxMintedForWallet(quantity)
+    {
         _mint(msg.sender, quantity);
     }
 
@@ -44,7 +52,9 @@ contract MaxMintableTest is Test {
 
     function testOnlyOwnerCanSetMaxMints() public {
         list.transferOwnership(address(1));
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(address(1));
+        list.acceptOwnership();
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
         list.setMaxMintsPerWallet(5);
     }
 

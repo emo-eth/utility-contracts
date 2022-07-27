@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
+import {TwoStepOwnable} from "./TwoStepOwnable.sol";
 
 /**
  * @notice Smart contract that verifies and tracks allow list redemptions against a configurable Merkle root, up to a
  * max number configured at deploy
  */
-contract AllowList is Ownable {
+contract AllowList is TwoStepOwnable {
     bytes32 public merkleRoot;
 
     error NotAllowListed();
@@ -35,7 +35,11 @@ contract AllowList is Ownable {
     ///@param proof Merkle proof
     ///@param data abi-encoded data to be checked against the root
     ///@return boolean isAllowListed
-    function isAllowListed(bytes32[] calldata proof, bytes memory data) public view returns (bool) {
+    function isAllowListed(bytes32[] calldata proof, bytes memory data)
+        public
+        view
+        returns (bool)
+    {
         return verifyCalldata(proof, merkleRoot, keccak256(data));
     }
 
@@ -43,8 +47,17 @@ contract AllowList is Ownable {
     ///@param proof Merkle proof
     ///@param addr address to check against allow list
     ///@return boolean isAllowListed
-    function isAllowListed(bytes32[] calldata proof, address addr) public view returns (bool) {
-        return verifyCalldata(proof, merkleRoot, keccak256(abi.encodePacked(addr)));
+    function isAllowListed(bytes32[] calldata proof, address addr)
+        public
+        view
+        returns (bool)
+    {
+        return
+            verifyCalldata(
+                proof,
+                merkleRoot,
+                keccak256(abi.encodePacked(addr))
+            );
     }
 
     /**
@@ -84,7 +97,11 @@ contract AllowList is Ownable {
     }
 
     /// @dev Copied from OpenZeppelin's MerkleProof.sol
-    function _efficientHash(bytes32 a, bytes32 b) private pure returns (bytes32 value) {
+    function _efficientHash(bytes32 a, bytes32 b)
+        private
+        pure
+        returns (bytes32 value)
+    {
         /// @solidity memory-safe-assembly
         assembly {
             mstore(0x00, a)

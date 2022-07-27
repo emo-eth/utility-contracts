@@ -4,10 +4,15 @@ pragma solidity >=0.8.4;
 import {Test} from "forge-std/Test.sol";
 
 import {BatchReveal} from "utility-contracts/BatchReveal.sol";
+import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+
 import {ERC721A} from "ERC721A/ERC721A.sol";
 
 contract BatchRevealImpl is BatchReveal {
-    constructor(bytes32 _provenanceHash) BatchReveal("", _provenanceHash) ERC721A("name", "name") {}
+    constructor(bytes32 _provenanceHash)
+        BatchReveal("", _provenanceHash)
+        ERC721A("name", "name")
+    {}
 
     function mint(uint256 numtokens) public {
         _mint(msg.sender, numtokens);
@@ -40,7 +45,10 @@ contract BatchRevealTest is Test {
 
     function testAddReveal_onlyOwner() public {
         test.transferOwnership(address(1));
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(address(1));
+        test.acceptOwnership();
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+
         test.addReveal(1, "uri1");
     }
 
@@ -55,7 +63,10 @@ contract BatchRevealTest is Test {
     function testUpdateReveal_onlyOwner() public {
         test.addReveal(1, "uri1");
         test.transferOwnership(address(1));
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(address(1));
+        test.acceptOwnership();
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+
         test.updateReveal(0, 2, "uri2");
     }
 
@@ -66,7 +77,10 @@ contract BatchRevealTest is Test {
 
     function testSetDefaultURI_onlyOwner() public {
         test.transferOwnership(address(1));
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(address(1));
+        test.acceptOwnership();
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+
         test.setDefaultURI("default2");
     }
 
@@ -81,7 +95,10 @@ contract BatchRevealTest is Test {
 
     function testSetFullyRevealed_onlyOwner() public {
         test.transferOwnership(address(1));
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.prank(address(1));
+        test.acceptOwnership();
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+
         test.setFullyRevealed("revealed/");
         vm.expectRevert();
         test.reveals(0);

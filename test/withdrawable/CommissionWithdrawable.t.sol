@@ -3,6 +3,8 @@ pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
 import {CommissionWithdrawable} from "utility-contracts/withdrawable/CommissionWithdrawable.sol";
+import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
@@ -87,17 +89,20 @@ contract CommissionWithdrawableTest is Test {
     function testWithdraw_onlyOwner(address _user) public {
         vm.assume(_user != withdraw.owner());
         vm.startPrank(_user);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
+
         withdraw.withdraw();
     }
 
     function testOnlyOwnerCanWithdrawERC20() public {
         withdraw.transferOwnership(address(user));
+        vm.prank(address(user));
+        withdraw.acceptOwnership();
 
         uint256 amount = 50 * 10**18;
         token.mint(amount);
         token.transfer(address(withdraw), amount);
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
 
         withdraw.withdrawERC20(address(token));
     }
