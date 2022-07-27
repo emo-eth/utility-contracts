@@ -9,9 +9,9 @@ import {IWithdrawable} from "./IWithdrawable.sol";
 ///@notice Ownable helper contract to withdraw ether or tokens from the contract address balance
 contract Withdrawable is Ownable, IWithdrawable {
     ///@notice Withdraw Ether from contract address. OnlyOwner.
-    function withdraw() external virtual {
+    function withdraw() external virtual onlyOwner {
         uint256 balance = address(this).balance;
-        SafeTransferLib.safeTransferETH(msg.sender, balance);
+        SafeTransferLib.safeTransferETH(owner(), balance);
     }
 
     ///@notice Withdraw tokens from contract address. OnlyOwner.
@@ -19,13 +19,17 @@ contract Withdrawable is Ownable, IWithdrawable {
     function withdrawERC20(address _token) external virtual onlyOwner {
         ERC20 token = ERC20(_token);
         uint256 balance = ERC20(_token).balanceOf(address(this));
-        SafeTransferLib.safeTransfer(token, msg.sender, balance);
+        SafeTransferLib.safeTransfer(token, owner(), balance);
     }
 
     ///@notice Withdraw tokens from contract address. OnlyOwner.
     ///@param _token ERC721 smart contract address
-    function withdrawERC721(address _token, uint256 tokenId) external virtual onlyOwner {
+    function withdrawERC721(address _token, uint256 tokenId)
+        external
+        virtual
+        onlyOwner
+    {
         ERC721 token = ERC721(_token);
-        token.transferFrom(address(this), msg.sender, tokenId);
+        token.transferFrom(address(this), owner(), tokenId);
     }
 }

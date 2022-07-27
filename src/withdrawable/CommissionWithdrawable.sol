@@ -29,13 +29,13 @@ contract CommissionWithdrawable is Withdrawable {
     ////////////////////////
 
     ///@notice Withdraw Ether from contract address. OnlyOwner.
-    function withdraw() external override {
+    function withdraw() external override onlyOwner {
         uint256 balance = address(this).balance;
         (
             uint256 ownerShareMinusCommission,
             uint256 commissionFee
         ) = calculateOwnerShareAndCommissionFee(balance);
-        SafeTransferLib.safeTransferETH(msg.sender, ownerShareMinusCommission);
+        SafeTransferLib.safeTransferETH(owner(), ownerShareMinusCommission);
         SafeTransferLib.safeTransferETH(commissionPayoutAddress, commissionFee);
     }
 
@@ -48,8 +48,12 @@ contract CommissionWithdrawable is Withdrawable {
             uint256 ownerShareMinusCommission,
             uint256 commissionFee
         ) = calculateOwnerShareAndCommissionFee(balance);
-        SafeTransferLib.safeTransfer(token, msg.sender, ownerShareMinusCommission);
-        SafeTransferLib.safeTransfer(token, commissionPayoutAddress, commissionFee);
+        SafeTransferLib.safeTransfer(token, owner(), ownerShareMinusCommission);
+        SafeTransferLib.safeTransfer(
+            token,
+            commissionPayoutAddress,
+            commissionFee
+        );
     }
 
     function calculateOwnerShareAndCommissionFee(uint256 balance)

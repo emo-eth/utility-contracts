@@ -70,9 +70,10 @@ contract WithdrawableTest is Test {
         assertEq(0, erc721.balanceOf(address(withdraw)));
     }
 
-    function testWithdraw_noRestrictions(address _user) public {
-        payable(address(withdraw)).transfer(1 ether);
-        vm.prank(_user);
+    function testWithdraw_onlyOwner(address _user) public {
+        vm.assume(_user != withdraw.owner());
+        vm.startPrank(_user);
+        vm.expectRevert("Ownable: caller is not the owner");
         withdraw.withdraw();
     }
 

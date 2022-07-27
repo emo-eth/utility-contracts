@@ -11,7 +11,7 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
         ownable = TwoStepOwnable(address(this));
         vm.prank(ownable.owner());
         ownable.transferOwnership(address(this));
-        ownable.claimOwnership();
+        ownable.acceptOwnership();
     }
 
     function testTransferOwnershipDoesNotImmediatelyTransferOwnership() public {
@@ -24,17 +24,17 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
         ownable.transferOwnership(address(0));
     }
 
-    function testClaimOwnership() public {
+    function testacceptOwnership() public {
         ownable.transferOwnership(address(1));
         vm.prank(address(1));
-        ownable.claimOwnership();
+        ownable.acceptOwnership();
         assertEq(ownable.owner(), address(1));
     }
 
     function testTransferOwnershipIsStillOnlyOwner() public {
         ownable.transferOwnership(address(1));
         vm.prank(address(1));
-        ownable.claimOwnership();
+        ownable.acceptOwnership();
         // prank is over, back to regular address
         vm.expectRevert("Ownable: caller is not the owner");
         ownable.transferOwnership(address(5));
@@ -45,20 +45,20 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
         ownable.cancelOwnershipTransfer();
         vm.startPrank(address(1));
         vm.expectRevert(abi.encodeWithSignature("NotNextOwner()"));
-        ownable.claimOwnership();
+        ownable.acceptOwnership();
     }
 
     function testNotNextOwner() public {
         ownable.transferOwnership(address(1));
         vm.startPrank(address(5));
         vm.expectRevert(abi.encodeWithSignature("NotNextOwner()"));
-        ownable.claimOwnership();
+        ownable.acceptOwnership();
     }
 
     function testOnlyOwnerCanCancelTransferOwnership() public {
         ownable.transferOwnership(address(1));
         vm.prank(address(1));
-        ownable.claimOwnership();
+        ownable.acceptOwnership();
         // prank is over
         vm.expectRevert("Ownable: caller is not the owner");
         ownable.cancelOwnershipTransfer();

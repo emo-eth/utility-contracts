@@ -7,7 +7,9 @@ import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 contract CommissionWithdrawableImpl is CommissionWithdrawable {
-    constructor(address _payout, uint256 _bps) CommissionWithdrawable(_payout, _bps) {}
+    constructor(address _payout, uint256 _bps)
+        CommissionWithdrawable(_payout, _bps)
+    {}
 
     function getCommissionBps() public view returns (uint256) {
         return commissionBps;
@@ -53,7 +55,9 @@ contract CommissionWithdrawableTest is Test {
         vm.expectRevert(abi.encodeWithSignature("CommissionBpsTooLarge()"));
         withdraw = new CommissionWithdrawableImpl(address(user), 10001);
         // bad
-        vm.expectRevert(abi.encodeWithSignature("CommissionPayoutAddressIsZeroAddress()"));
+        vm.expectRevert(
+            abi.encodeWithSignature("CommissionPayoutAddressIsZeroAddress()")
+        );
         withdraw = new CommissionWithdrawableImpl(address(0), 10000);
     }
 
@@ -80,10 +84,10 @@ contract CommissionWithdrawableTest is Test {
         assertEq((1000 * 50) / 10000, token.balanceOf(address(user)));
     }
 
-    function testWithdraw_noRestrictions(address _user) public {
-        vm.assume(_user.code.length == 0);
-        payable(address(withdraw)).transfer(1 ether);
-        vm.prank(_user);
+    function testWithdraw_onlyOwner(address _user) public {
+        vm.assume(_user != withdraw.owner());
+        vm.startPrank(_user);
+        vm.expectRevert("Ownable: caller is not the owner");
         withdraw.withdraw();
     }
 
@@ -109,13 +113,16 @@ contract CommissionWithdrawableTest is Test {
         assertEq(bigBalance - userBalance, token.balanceOf(address(this)));
     }
 
-    function testFuzzyWithdraw(uint256 bps, uint256 balance) public inRange(bps, balance) {
+    function testFuzzyWithdraw(uint256 bps, uint256 balance)
+        public
+        inRange(bps, balance)
+    {
         withdraw = new CommissionWithdrawableImpl(address(user), bps);
         payable(address(withdraw)).transfer(balance);
         uint256 preWithdrawBalance = address(this).balance;
         withdraw.withdraw();
-        uint256 withdrawnBalance = (address(this).balance - preWithdrawBalance) +
-            address(user).balance;
+        uint256 withdrawnBalance = (address(this).balance -
+            preWithdrawBalance) + address(user).balance;
         assertEq(balance, withdrawnBalance);
         assertEq(address(user).balance, (balance * bps) / 10000);
     }

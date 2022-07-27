@@ -11,30 +11,40 @@ Helpful in guarding against transferring ownership to an address that is unable 
 abstract contract TwoStepOwnable is Ownable {
     address internal _potentialOwner;
 
+    event PotentialOwnerUpdated(address newPotentialAdministrator);
+
     error NewOwnerIsZeroAddress();
     error NotNextOwner();
 
-    ///@notice Initiate ownership transfer to newPotentialOwner. Note: new owner will have to manually claimOwnership
+    ///@notice Initiate ownership transfer to newPotentialOwner. Note: new owner will have to manually acceptOwnership
     ///@param newPotentialOwner address of potential new owner
-    function transferOwnership(address newPotentialOwner) public virtual override onlyOwner {
+    function transferOwnership(address newPotentialOwner)
+        public
+        virtual
+        override
+        onlyOwner
+    {
         if (newPotentialOwner == address(0)) {
             revert NewOwnerIsZeroAddress();
         }
         _potentialOwner = newPotentialOwner;
+        emit PotentialOwnerUpdated(newPotentialOwner);
     }
 
     ///@notice Claim ownership of smart contract, after the current owner has initiated the process with transferOwnership
-    function claimOwnership() public virtual {
+    function acceptOwnership() public virtual {
         address potentialOwner = _potentialOwner;
         if (msg.sender != potentialOwner) {
             revert NotNextOwner();
         }
-        _transferOwnership(potentialOwner);
         delete _potentialOwner;
+        emit PotentialOwnerUpdated(address(0));
+        _transferOwnership(potentialOwner);
     }
 
     ///@notice cancel ownership transfer
     function cancelOwnershipTransfer() public virtual onlyOwner {
         delete _potentialOwner;
+        emit PotentialOwnerUpdated(address(0));
     }
 }
