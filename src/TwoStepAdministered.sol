@@ -5,7 +5,7 @@ import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
 
 contract TwoStepAdministered is TwoStepOwnable {
     event AdministratorUpdated(
-        address indexed user,
+        address indexed previousAdministrator,
         address indexed newAdministrator
     );
     event PotentialAdministratorUpdated(address newPotentialAdministrator);
@@ -13,7 +13,6 @@ contract TwoStepAdministered is TwoStepOwnable {
     error OnlyAdministrator();
     error OnlyOwnerOrAdministrator();
     error NotNextAdministrator();
-    error AlreadyInitialized();
     error NewAdministratorIsZeroAddress();
 
     address public administrator;
@@ -28,7 +27,7 @@ contract TwoStepAdministered is TwoStepOwnable {
     }
 
     modifier onlyOwnerOrAdministrator() virtual {
-        if (msg.sender != owner()) {
+        if (msg.sender != owner) {
             if (msg.sender != administrator) {
                 revert OnlyOwnerOrAdministrator();
             }
@@ -37,17 +36,11 @@ contract TwoStepAdministered is TwoStepOwnable {
     }
 
     constructor(address _administrator) {
-        administrator = _administrator;
-
-        emit AdministratorUpdated(address(0), _administrator);
+        _initialize(_administrator);
     }
 
-    function _initialize(address _administrator) public {
-        if (address(this).code.length != 0) {
-            revert AlreadyInitialized();
-        }
+    function _initialize(address _administrator) private onlyConstructor {
         administrator = _administrator;
-
         emit AdministratorUpdated(address(0), _administrator);
     }
 
@@ -72,7 +65,7 @@ contract TwoStepAdministered is TwoStepOwnable {
         emit AdministratorUpdated(msg.sender, newAdministrator);
     }
 
-    ///@notice Claim administration of smart contract, after the current administrator has initiated the process with transferAdministration
+    ///@notice Acept administration of smart contract, after the current administrator has initiated the process with transferAdministration
     function acceptAdministration() public virtual {
         address _potentialAdministrator = potentialAdministrator;
         if (msg.sender != _potentialAdministrator) {

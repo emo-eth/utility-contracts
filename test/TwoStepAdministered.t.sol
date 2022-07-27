@@ -31,8 +31,9 @@ contract TwoStepAdministeredTest is Test {
 
     function testTransferAdministrationRejectsZeroAddress() public {
         vm.expectRevert(
-            abi.encodeWithSignature("NewAdministratorIsZeroAddress()")
+            TwoStepAdministered.NewAdministratorIsZeroAddress.selector
         );
+
         administered.transferAdministration(address(0));
     }
 
@@ -48,7 +49,7 @@ contract TwoStepAdministeredTest is Test {
         vm.prank(address(1));
         administered.acceptAdministration();
         // prank is over, back to regular address
-        vm.expectRevert(abi.encodeWithSignature("OnlyAdministrator()"));
+        vm.expectRevert(TwoStepAdministered.OnlyAdministrator.selector);
         administered.transferAdministration(address(5));
     }
 
@@ -56,14 +57,14 @@ contract TwoStepAdministeredTest is Test {
         administered.transferAdministration(address(1));
         administered.cancelAdministrationTransfer();
         vm.startPrank(address(1));
-        vm.expectRevert(abi.encodeWithSignature("NotNextAdministrator()"));
+        vm.expectRevert(TwoStepAdministered.NotNextAdministrator.selector);
         administered.acceptAdministration();
     }
 
     function testNotNextAdministrator() public {
         administered.transferAdministration(address(1));
         vm.startPrank(address(5));
-        vm.expectRevert(abi.encodeWithSignature("NotNextAdministrator()"));
+        vm.expectRevert(TwoStepAdministered.NotNextAdministrator.selector);
         administered.acceptAdministration();
     }
 
@@ -72,7 +73,7 @@ contract TwoStepAdministeredTest is Test {
         vm.prank(address(1));
         administered.acceptAdministration();
         // prank is over
-        vm.expectRevert(abi.encodeWithSignature("OnlyAdministrator()"));
+        vm.expectRevert(TwoStepAdministered.OnlyAdministrator.selector);
         administered.cancelAdministrationTransfer();
     }
 
@@ -90,7 +91,8 @@ contract TwoStepAdministeredTest is Test {
                 notOwnerOrAdministrator != administered.administrator()
         );
         vm.startPrank(notOwnerOrAdministrator);
-        vm.expectRevert(abi.encodeWithSignature("OnlyOwnerOrAdministrator()"));
+        vm.expectRevert(TwoStepAdministered.OnlyOwnerOrAdministrator.selector);
+
         administered.specialMethod();
     }
 }

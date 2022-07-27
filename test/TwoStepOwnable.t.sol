@@ -20,7 +20,7 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
     }
 
     function testTransferOwnershipRejectsZeroAddress() public {
-        vm.expectRevert(abi.encodeWithSignature("NewOwnerIsZeroAddress()"));
+        vm.expectRevert(TwoStepOwnable.NewOwnerIsZeroAddress.selector);
         ownable.transferOwnership(address(0));
     }
 
@@ -36,7 +36,7 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
         vm.prank(address(1));
         ownable.acceptOwnership();
         // prank is over, back to regular address
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
         ownable.transferOwnership(address(5));
     }
 
@@ -44,14 +44,14 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
         ownable.transferOwnership(address(1));
         ownable.cancelOwnershipTransfer();
         vm.startPrank(address(1));
-        vm.expectRevert(abi.encodeWithSignature("NotNextOwner()"));
+        vm.expectRevert(TwoStepOwnable.NotNextOwner.selector);
         ownable.acceptOwnership();
     }
 
     function testNotNextOwner() public {
         ownable.transferOwnership(address(1));
         vm.startPrank(address(5));
-        vm.expectRevert(abi.encodeWithSignature("NotNextOwner()"));
+        vm.expectRevert(TwoStepOwnable.NotNextOwner.selector);
         ownable.acceptOwnership();
     }
 
@@ -60,7 +60,7 @@ contract TwoStepOwnableTest is TwoStepOwnable, Test {
         vm.prank(address(1));
         ownable.acceptOwnership();
         // prank is over
-        vm.expectRevert("Ownable: caller is not the owner");
+        vm.expectRevert(TwoStepOwnable.OnlyOwner.selector);
         ownable.cancelOwnershipTransfer();
     }
 }
