@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.0;
 
-import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+import {TwoStepOwnable} from "./TwoStepOwnable.sol";
 
 contract TwoStepAdministered is TwoStepOwnable {
     event AdministratorUpdated(
