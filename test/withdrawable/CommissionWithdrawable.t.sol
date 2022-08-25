@@ -2,8 +2,8 @@
 pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
-import {CommissionWithdrawable} from "utility-contracts/withdrawable/CommissionWithdrawable.sol";
-import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+import {CommissionWithdrawable} from "../../src/withdrawable/CommissionWithdrawable.sol";
+import {TwoStepOwnable} from "../../src/TwoStepOwnable.sol";
 
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";

@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
-import {ConstructorInitializable} from "utility-contracts/ConstructorInitializable.sol";
+import {ConstructorInitializable} from "../src/ConstructorInitializable.sol";
 
 contract InitializableImpl is ConstructorInitializable {
     function specialMethod() public onlyConstructor {}

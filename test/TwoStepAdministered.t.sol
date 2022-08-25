@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
-import {TwoStepAdministered} from "utility-contracts/TwoStepAdministered.sol";
+import {TwoStepAdministered} from "../src/TwoStepAdministered.sol";
 
 contract TwoStepAdministeredImpl is TwoStepAdministered(address(0)) {
     function specialMethod() public onlyOwnerOrAdministrator {}

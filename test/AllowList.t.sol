@@ -2,8 +2,8 @@
 pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
-import {AllowList} from "utility-contracts/AllowList.sol";
-import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+import {AllowList} from "../src/AllowList.sol";
+import {TwoStepOwnable} from "../src/TwoStepOwnable.sol";
 
 contract AllowListImpl is AllowList(bytes32(0)) {
     function redeem(bytes32[] calldata _proof)

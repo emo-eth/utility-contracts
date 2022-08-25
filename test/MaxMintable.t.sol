@@ -2,8 +2,8 @@
 pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
-import {MaxMintable} from "utility-contracts/MaxMintable.sol";
-import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+import {MaxMintable} from "../src/MaxMintable.sol";
+import {TwoStepOwnable} from "../src/TwoStepOwnable.sol";
 
 import {ERC721A} from "./ERC721A.sol";
 

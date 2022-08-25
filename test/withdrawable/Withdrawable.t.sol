@@ -3,8 +3,8 @@ pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
 
-import {Withdrawable} from "utility-contracts/withdrawable/Withdrawable.sol";
-import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+import {Withdrawable} from "../../src/withdrawable/Withdrawable.sol";
+import {TwoStepOwnable} from "../../src/TwoStepOwnable.sol";
 import {ERC20} from "solmate/tokens/ERC20.sol";
 import {ERC721} from "solmate/tokens/ERC721.sol";
 import {ERC1155} from "solmate/tokens/ERC1155.sol";

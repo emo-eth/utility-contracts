@@ -2,7 +2,7 @@
 pragma solidity >=0.8.4;
 
 import {Test} from "forge-std/Test.sol";
-import {TwoStepOwnable} from "utility-contracts/TwoStepOwnable.sol";
+import {TwoStepOwnable} from "../src/TwoStepOwnable.sol";
 
 contract TwoStepOwnableTest is TwoStepOwnable, Test {
     TwoStepOwnable ownable;
