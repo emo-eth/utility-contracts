@@ -9,7 +9,7 @@ Owner can cancel the transfer at any point before the new owner claims ownership
 Helpful in guarding against transferring ownership to an address that is unable to act as the Owner.
 */
 abstract contract TwoStepOwnable is ConstructorInitializable {
-    address public owner;
+    address private _owner;
 
     event OwnershipTransferred(
         address indexed previousOwner,
@@ -68,11 +68,15 @@ abstract contract TwoStepOwnable is ConstructorInitializable {
         emit PotentialOwnerUpdated(address(0));
     }
 
+    function owner() public view virtual returns (address) {
+        return _owner;
+    }
+
     /**
      * @dev Throws if the sender is not the owner.
      */
     function _checkOwner() internal view virtual {
-        if (owner != msg.sender) {
+        if (_owner != msg.sender) {
             revert OnlyOwner();
         }
     }
@@ -93,8 +97,8 @@ abstract contract TwoStepOwnable is ConstructorInitializable {
      * Internal function without access restriction.
      */
     function _transferOwnership(address newOwner) internal virtual {
-        address oldOwner = owner;
-        owner = newOwner;
+        address oldOwner = _owner;
+        _owner = newOwner;
         emit OwnershipTransferred(oldOwner, newOwner);
     }
 }

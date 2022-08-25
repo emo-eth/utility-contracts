@@ -27,7 +27,7 @@ contract TwoStepAdministered is TwoStepOwnable {
     }
 
     modifier onlyOwnerOrAdministrator() virtual {
-        if (msg.sender != owner) {
+        if (msg.sender != owner()) {
             if (msg.sender != administrator) {
                 revert OnlyOwnerOrAdministrator();
             }

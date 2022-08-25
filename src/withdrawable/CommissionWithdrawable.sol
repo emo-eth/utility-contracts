@@ -35,7 +35,7 @@ contract CommissionWithdrawable is Withdrawable {
             uint256 ownerShareMinusCommission,
             uint256 commissionFee
         ) = calculateOwnerShareAndCommissionFee(balance);
-        SafeTransferLib.safeTransferETH(owner, ownerShareMinusCommission);
+        SafeTransferLib.safeTransferETH(owner(), ownerShareMinusCommission);
         SafeTransferLib.safeTransferETH(commissionPayoutAddress, commissionFee);
     }
 
@@ -48,7 +48,7 @@ contract CommissionWithdrawable is Withdrawable {
             uint256 ownerShareMinusCommission,
             uint256 commissionFee
         ) = calculateOwnerShareAndCommissionFee(balance);
-        SafeTransferLib.safeTransfer(token, owner, ownerShareMinusCommission);
+        SafeTransferLib.safeTransfer(token, owner(), ownerShareMinusCommission);
         SafeTransferLib.safeTransfer(
             token,
             commissionPayoutAddress,
